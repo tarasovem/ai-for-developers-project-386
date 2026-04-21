@@ -14,6 +14,12 @@ export class AppRoot extends LitElement {
   @state()
   private route = normalizeRoute(window.location.pathname)
 
+  private triggerPublicEvent(eventName: 'calendar:open-booking' | 'calendar:open-landing'): void {
+    window.requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent(eventName))
+    })
+  }
+
   connectedCallback(): void {
     super.connectedCallback()
     if (
@@ -38,28 +44,45 @@ export class AppRoot extends LitElement {
     navigate(route)
   }
 
+  private handlePublicNavigation(): void {
+    if (this.route !== '/public') {
+      this.handleRouteChange('/public')
+    }
+    this.triggerPublicEvent('calendar:open-booking')
+  }
+
+  private handleBrandNavigation(event: Event): void {
+    event.preventDefault()
+    if (this.route !== '/public') {
+      this.handleRouteChange('/public')
+    }
+    this.triggerPublicEvent('calendar:open-landing')
+  }
+
   render() {
     return html`
       <main class="layout">
         <header class="header">
-          <div>
-            <h1>Calendar Booking</h1>
-            <p>UI на Lit + Shoelace по текущему TypeSpec-контракту.</p>
-          </div>
+          <a class="brand" href="/public" @click=${this.handleBrandNavigation}>
+            <span class="brand-icon" aria-hidden="true"></span>
+            <span class="brand-text">Calendar</span>
+          </a>
 
           <nav class="nav">
-            <sl-button
-              variant=${this.route === '/public' ? 'primary' : 'default'}
-              @click=${() => this.handleRouteChange('/public')}
+            <button
+              type="button"
+              class=${this.route === '/public' ? 'nav-button active' : 'nav-button'}
+              @click=${this.handlePublicNavigation}
             >
-              Public
-            </sl-button>
-            <sl-button
-              variant=${this.route === '/admin' ? 'primary' : 'default'}
+              Записаться
+            </button>
+            <button
+              type="button"
+              class=${this.route === '/admin' ? 'nav-button active' : 'nav-button'}
               @click=${() => this.handleRouteChange('/admin')}
             >
-              Admin
-            </sl-button>
+              Админка
+            </button>
           </nav>
         </header>
 
@@ -90,31 +113,110 @@ export class AppRoot extends LitElement {
     .layout {
       box-sizing: border-box;
       margin: 0 auto;
-      max-width: 1100px;
-      padding: 1.25rem;
+      max-width: 1260px;
+      min-height: 100vh;
+      padding: 1.5rem 1.75rem 2.5rem;
     }
 
     .header {
-      align-items: start;
+      align-items: center;
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 1rem;
       justify-content: space-between;
-      margin-bottom: 1rem;
+      margin-bottom: 2.5rem;
     }
 
-    .header h1 {
-      margin: 0;
+    .brand {
+      align-items: center;
+      color: inherit;
+      display: inline-flex;
+      gap: 0.55rem;
+      text-decoration: none;
     }
 
-    .header p {
-      color: #475569;
-      margin: 0.35rem 0 0;
+    .brand-icon {
+      background: #ff7a1a;
+      border-radius: 0.35rem;
+      box-shadow: inset 0 0 0 2px #fff;
+      display: inline-block;
+      height: 1.05rem;
+      position: relative;
+      width: 1.05rem;
+    }
+
+    .brand-icon::before {
+      background: #fff;
+      content: '';
+      height: 0.14rem;
+      left: 0.16rem;
+      position: absolute;
+      right: 0.16rem;
+      top: 0.35rem;
+    }
+
+    .brand-icon::after {
+      background: #fff;
+      border-radius: 999px;
+      content: '';
+      height: 0.22rem;
+      left: 0.18rem;
+      position: absolute;
+      top: 0.1rem;
+      width: 0.22rem;
+    }
+
+    .brand-text {
+      font-size: 1.52rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     .nav {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.45rem;
+    }
+
+    .nav-button {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 0.55rem;
+      color: #64748b;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.4rem 0.78rem;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .nav-button:hover {
+      border-color: #dbe3ef;
+      color: #1e293b;
+    }
+
+    .nav-button.active {
+      background: #f2f6fb;
+      border-color: #dce5f2;
+      color: #1f2c44;
+      font-weight: 600;
+    }
+
+    @media (max-width: 820px) {
+      .layout {
+        padding: 1rem 1rem 1.75rem;
+      }
+
+      .header {
+        margin-bottom: 1.4rem;
+      }
+
+      .brand-text {
+        font-size: 1.25rem;
+      }
     }
   `
 }

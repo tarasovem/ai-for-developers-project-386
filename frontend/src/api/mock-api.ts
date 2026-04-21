@@ -12,23 +12,23 @@ import { addDays, getDefaultWindow, toIso } from '../utils/date'
 
 const owner: Owner = {
   id: 'owner-default',
-  displayName: 'Default Owner',
+  displayName: 'Tota',
   timezone: 'Europe/Moscow',
   isDefaultProfile: true
 }
 
 const eventTypesStore: EventType[] = [
   {
-    id: 'intro-call',
-    name: 'Intro call',
-    description: 'Первичная встреча для знакомства и согласования задач.',
-    durationMinutes: 30
+    id: 'meeting-15',
+    name: 'Встреча 15 минут',
+    description: 'Короткий тип события для быстрого слота.',
+    durationMinutes: 15
   },
   {
-    id: 'planning-session',
-    name: 'Planning session',
-    description: 'Планирование спринта и декомпозиция задач.',
-    durationMinutes: 60
+    id: 'meeting-30',
+    name: 'Встреча 30 минут',
+    description: 'Базовый тип события для бронирования.',
+    durationMinutes: 30
   }
 ]
 
@@ -36,7 +36,7 @@ const bookingsStore: Booking[] = [
   {
     id: 'booking-seed-1',
     ownerId: owner.id,
-    eventTypeId: 'intro-call',
+    eventTypeId: 'meeting-15',
     slotStartAt: addDays(new Date(), 1).toISOString(),
     slotEndAt: addDays(new Date(Date.now() + 30 * 60 * 1000), 1).toISOString(),
     guestName: 'Иван Петров',
