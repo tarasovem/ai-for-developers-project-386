@@ -23,6 +23,11 @@ export function createApp(options: CreateAppOptions = {}): FastifyInstance {
   const store = options.store ?? createInMemoryStore()
   const bookingService = new BookingService(store, options.getNow)
 
+  app.get('/', async () => ({
+    status: 'ok',
+    service: 'booking-api'
+  }))
+
   app.register(cors, {
     origin: true
   })
